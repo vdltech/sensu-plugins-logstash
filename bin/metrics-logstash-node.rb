@@ -150,6 +150,13 @@ class LogstashNodeMetrics < Sensu::Plugin::Metric::CLI::Graphite
           end
         end
 
+        # Persistent queue length
+        if node['pipelines'][pipeline]['queue']
+          if node['pipelines'][pipeline]['queue']['type'] == 'persisted'
+            metrics["pipelines.#{pipeline}.queue_events"] = node['pipelines'][pipeline]['queue']['events'].to_i
+          end
+        end
+
         node['pipelines'][pipeline]['plugins']['inputs'].each do |item|
           item['events'] = {} unless item.key?('events')
           metrics["pipelines.#{pipeline}.plugins.inputs.#{item['name']}.#{item['id']}.events.in"] = item['events']['in'].to_i || 0
